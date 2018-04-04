@@ -1,0 +1,6 @@
+<select [(ngModel)]='student' (ngModelChange)="trys($event)">
+  <option value="">请选择</option>
+  <option *ngFor="let item of students" [ngValue]='item'>{{item.name}}</option>  
+</select>
+{{ student | json }}
+<app-test-child></app-test-child>

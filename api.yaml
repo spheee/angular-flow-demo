@@ -1,0 +1,427 @@
+swagger: '2.0'
+info:
+  title: 多轮会话 API
+  description: 多轮会话的 API
+  version: "1.0.0"
+# # the domain of the service
+# host: api.uber.com
+# array of all schemes that your API supports
+schemes:
+  - http
+# will be prefixed to all paths
+basePath: /api
+produces:
+  - application/json
+paths:
+  /sceneDialogs:
+    get:
+      summary: 场景对话数组
+      description: |
+        获得目前所有的场景对话
+      tags:
+        - sceneDialogs
+      responses:
+        200:
+          description: 返回数组
+          properties:
+            code:
+              type: integer
+              description: 返回状态码
+            data: 
+              type: array 
+              items: 
+                $ref: '#/definitions/SceneDialog'
+            msg: 
+              type: string
+              description: 返回说明
+   
+    post:
+      summary: 保存场景对话
+      description: |
+        保存一些场景对话
+      parameters:
+        - name: sceneDialogs
+          in: body
+          description: 一个sceneDialogs的数组
+          schema:
+            type: array
+            items:
+              $ref: '#/parameters/SceneDialog'
+      tags:
+        - sceneDialogs
+      responses:
+        200:
+          description: 返回是否成功
+          properties:
+            code:
+              type: integer
+              description: 返回状态码
+            data:
+              
+            msg:
+              type: string
+              description: 返回说明
+  
+  /sceneDialog:
+    post:
+      tags:
+        - sceneDialog
+      summary: 保存一个场景对话数组
+      description: 保存一个场景对话数组
+      responses:
+        200:
+          description: 返回是否成功
+          properties:
+            code:
+              type: integer
+              description: 返回状态码
+          
+            msg:
+              type: string
+              description: 返回说明
+
+  /sceneDialog/{scene-dialog-id}:
+    parameters:
+      - name: scene-dialog-id
+        in: path
+        description: 场景id
+        required: true
+        type: integer
+    get:
+      tags:
+        - sceneDialog
+      summary: 场景对话实例
+      description: |
+        获得一个场景
+      respoenses:
+        200:
+          description: 返回是否成功
+          properties:
+            code:
+              type: integer
+              description: 返回状态码
+            data:
+             $ref: '#/definitions/SceneDialog'
+            msg:
+              type: string
+              description: 返回说明
+    post:
+      tags:
+        - sceneDialog
+      summary: 修改场景对话实例
+      description: |
+        修改一个场景对话实例
+      respoenses:
+        200:
+          description: 返回是否成功
+          properties:
+            code:
+              type: integer
+              description: 返回状态码
+            data:
+            msg:
+              type: string
+              description: 返回说明
+              
+  /sceneDialog/{scene-dialog-id}/parameter:
+    parameters:
+      - name: scene-dialog-id
+        in: path
+        description: 场景id
+        required: true
+        type: integer
+    get:
+      tags:
+        - parameters
+      summary: 收集场景参数
+      description: |
+        获得一个场景的参数收集问题
+      respoenses:
+        200:
+          description: 返回是否成功
+          properties:
+            code:
+              type: integer 
+              description: 返回状态码
+            data:
+              type: array
+              items:
+                $ref: '#/definitions/SceneParameter'
+            msg:
+              type: string
+              description: 返回说明
+
+  /sceneIntentQuestion/{scene-uuid}:
+    parameters:
+      - name: scene-uuid
+        in: path
+        description: 意图场景的uuid
+        required: true
+        type: string
+    get:
+      tags:
+        - sceneIntentQuestion
+      summary: 场景意图问题
+      description: |
+        获得一个意图场景的问题
+      responses:
+        200:
+          description: 返回意图场景实例
+          properties:
+            code:
+              type: integer
+              description: 返回状态码
+            data:
+              $ref: '#/definitions/SceneIntentQuestion'
+            msg:
+              type: string
+              description: 返回说明
+    post:
+      tags:
+        - sceneIntentQuestion
+      summary: 场景意图问题
+      description: |
+        保存、修改一个场景意图问题
+      responses:
+        200:
+          description:  返回成功与否
+          properties:
+            code:
+              type: integer
+              description: 返回状态码
+            msg:
+              type: string
+              description: 返回说明        
+
+  /sceneJudgeRule/{scene-id}:
+    parameters:
+      - name: scene-id
+        in: path
+        description: 意图场景的ID
+        required: true
+        type: string
+    post:
+      tags:
+        - sceneJudgeRule
+      summary: 保存逻辑判断条件
+      description: 保存一个逻辑分支里面的逻辑判断条件
+      responses:
+        200:
+          description: 保存成功与否
+          properties:
+            code:
+              type: integer
+              description:  返回状态码
+            msg:
+              type: string
+              description: 返回说明  
+
+  /sceneJudgeRule/:
+    get:
+      tags:
+        - sceneJudgeRule
+      summary: 逻辑判断
+      description: 返回一个逻辑判断的所有条件
+      responses:
+        200:
+          description: 返回成功与否
+          properties:
+            code: 
+              type: integer
+              description: 返回状态码
+            data:
+              type: array
+              items:
+                $ref:'#/definitions/SceneJudgeRule'
+            msg:
+              type: string
+              description: 返回说明  
+
+  /sceneRespond/{scene-id}:
+    get:
+      tags:
+        - sceneRespond
+      summary: 场景响应
+      description: 返回一个场景响应的详情
+      responses:
+        200:
+          description: 返回成功与否
+          properties:
+            code: 
+              type: integer
+              description: 返回状态码
+            data:
+              type: array
+              items:
+                $ref:'#/definitions/SceneJudgeRule'
+            msg:
+              type: string
+              description: 返回说明  
+      
+  /sceneRespond:
+    post:
+      tags:
+        - sceneRespond
+      summary: 场景响应
+      description: 保存一个场景响应
+      responses:
+        200:
+          description:  返回成功与否
+          properties:
+            code:
+              type: integer
+              description: 返回状态码
+            msg:
+              type: string
+              description: 返回说明              
+  
+  
+    
+
+parameters:
+  SceneDialog:
+    type: object
+    properties:
+      id: 
+        type: integer
+        description: 场景id
+      group: 
+        type: string 
+        description: 场景组
+      uuid:
+        type: string
+        descriptuon: 场景唯一id，用于关联使用
+      name:
+        type: string
+        description: 名称
+      dialogType: 
+        type: integer
+        description: 场景对话类型
+      nextDialog:
+        type: string
+        description: 下一个场景对话uuid
+      errorDialog:
+        type: string
+        description: 错误时跳转的下一个场景
+definitions:
+  defaultRes:
+    type: object
+    properties:
+      code:
+        type: integer
+        description: 状态码
+      data:
+        type: object
+        description: 返回的实例
+      msg:
+        tyoe: string
+        description: 返回信息
+  SceneDialog:
+    type: object
+    properties:
+      id: 
+        type: integer
+        description: 场景id
+      group: 
+        type: string 
+        description: 场景组
+      uuid:
+        type: string
+        description: 场景唯一id，用于关联使用
+      name:
+        type: string
+        description: 名称
+      dialogType: 
+        type: integer
+        description: 场景对话类型
+      nextDialog:
+        type: string
+        description: 下一个场景对话uuid
+      errorDialog:
+        type: string
+        description: 错误时跳转的下一个场景
+  SceneIntentQuestion:
+    type: object
+    properties:
+      sceneUuid: 
+        type: string
+        description: 意图场景的Uuid
+      question:
+        type: string
+        description: 场景意图问题
+  SceneJudgeRule:
+    type: object
+    properties:
+      id: 
+        type: integer
+        description: 场景ID
+      sceneUuid: 
+        type: string
+        description: 场景uuid
+      order: 
+        type: integer
+        description: 排序
+      ruleJson: 
+        type: string 
+        description: 校验规则的json
+      nextDialog: 
+        type: string
+        description: 下一个场景对话的uuid
+  SceneParameter:
+    type: object
+    properties:
+      id: 
+        type: integer
+        description: '场景id'
+      sceneUuid:
+        type: string
+        description: 场景Uuid
+      order: 
+        type: integer
+        description: 排序
+      ruleMode: 
+        type: integer
+        description: 校验规则
+      ruleValue: 
+        type: string 
+        description: 校验基本数据
+      context:
+        type: integer
+        description: 是否通过上下文收集
+      must:
+        type: integer
+        description: 是否必须
+      defaultValue: 
+        type: string
+        description: 非必填字段
+      askBack: 
+        type: integer
+        description: 是否反问
+      askQuestion: 
+        type: string
+        description: 反问问题
+      errorPrompt: 
+        type: string 
+        description: 错误提示说辞
+      maxErrorCount: 
+        type: integer
+        description: 最大错误次数
+  SceneRepond:
+    type: object
+    properties:
+      id:
+        type: integer
+        description: 场景id
+      sceneUuid:
+        type: integer
+        description: 场景Uuid
+      endType:
+        type: integer
+        description: 结束类型
+      endValue:
+        type: string
+        description: 结束值类型
+      moreAnswer:
+        type: integer
+        description: 多答案模式
+        
