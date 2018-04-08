@@ -20,25 +20,5 @@ export class FlowSVGFactory {
    * @description 默认配置
    */
   defaultOptions: FlowSVGOptions;
-  /**
-   * @description 构造函数
-   * @param options 配置项
-   * @param container 容器
-   * @param node 节点
-   */
-  constructor(
-    options: {
-      width: 100,
-      height: 100,
-      id: 'test'
-    }, container, node) {
-  }
-  /**
-   *
-   */
-  buildNode() {}
-  /**
-   * @description 节点点击
-   */
-  click(): void {}
+
 }

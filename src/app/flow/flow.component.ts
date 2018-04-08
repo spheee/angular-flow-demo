@@ -1,21 +1,14 @@
-import {
-  Component,
-  ElementRef,
-  OnInit
-} from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 import * as d3 from 'd3';
-
 import * as dagreD3 from 'dagre-d3';
-import {
-  SceneService
-} from '../scene.service';
-import {
-  SceneDialog
-} from '../ywtest/scene-dialog';
 
-import {
-  FlowSVGFactory
-} from './flowSvg.factory';
+import {FlowNode} from './flow-node';
+// import { FlowNode } from '../interface/flowNode';
+import { SceneService } from '../scene.service';
+import { SceneDialog } from '../ywtest/scene-dialog';
+import { FlowSVGFactory } from './flowSvg.factory';
+
+import { Guid } from '../common/guid';
 
 @Component({
   selector: 'app-flow',
@@ -33,8 +26,12 @@ export class FlowComponent implements OnInit {
    */
   sceneDialogs: SceneDialog[];
 
+  flowNode: FlowNode;
+  /**
+   * @description 节点数组
+   */
+  flowNodes: Array < FlowNode > ;
   constructor(private sceneService: SceneService, private ele: ElementRef) {}
-
 
   ngOnInit() {
     this.initFlowSVG();
@@ -46,81 +43,76 @@ export class FlowComponent implements OnInit {
    * TODO:分拆逻辑
    */
   initFlowSVG(): void {
+    // flowSvg容器
     this.flowSvg = d3.select(this.ele.nativeElement).append('svg').attr('id', 'test');
-
-    let defaultNode={
-      type:0,
-      description:'意图入口'
-    }
-    this.setFlowNode(this.flowSvg,defaultNode );
-
-    // this.flowSvg
-
-
-
-    // debugger
+    // 一个默认node 用来初始化
+    const defaultNode = new FlowNode(0);
+    defaultNode.description = '描述描述';
+    this.setFlowNode(this.flowSvg, defaultNode);
+    this.addNode()
     // new FlowSVGFactory(,this.flowSvg)
   }
   /**
    * @description 设置一个flow的node
    */
-  setFlowNode(svgContainer:any, node: {
-    type: number, description: string
-  }): void {
-    // 节点 shape类型
-    let nodeShapeType = '';
-    switch (node.type) {
-      // 意图场景
-      case 0:
-        nodeShapeType = 'entry';
-        break;
-        // 实体参数收集
-      case 1:
-        nodeShapeType = 'arrow';
-        break;
-        // 逻辑判断场景
-      case 2:
-        nodeShapeType = 'diamond';
-        break;
-        // 动作
-      case 3:
-        nodeShapeType = 'fathexagon';
-        break;
-        // 响应场景
-      case 4:
-        nodeShapeType = 'longrect';
-        break;
-        // 结束场景
-      case 5:
-        nodeShapeType = 'hexagon';
-        break;
-      default:
-        nodeShapeType = 'rect';
-        break;
-    }
-    this.renderFlowNode(svgContainer, node);
+  setFlowNode(
+    svgContainer: any, node: FlowNode): void {
+    // TODO: 优化？
+    // node = Object.assign(node, {
+    //   nodeShapeType: nodeShapeType
+    // });
+    // this.renderFlowNode(svgContainer, node);
   }
-  renderFlowNode(ele, node): void {
-    let flowGroup=ele.append('g').attr('id','testofitu');
+
+
+  /**
+   * @description 新增节点
+   * @param uuid 传入的uuid，可选
+   * @param type 传入的类型，可选
+   */
+  addNode( uuid?: string, type?: number) {
+    uuid = uuid || new Guid().newGuid(),
+    type = type || 0;
+
+    const newNode = new FlowNode(type);
+    newNode.uuid = uuid;
+    debugger
+
+  }
+
+  addFlowNode(node) {
+
+  }
+  /**
+   * @description 渲染一个流程图中的node
+   * @param ele element
+   * @param node 节点 TODO:需要支撑
+   */
+  renderFlowNode(ele: any, node): void {
+    const flowGroup = ele.append('g').attr('id', 'testofitu');
+    const flowSVG = this;
 
     const render = new dagreD3.render();
     const graph = new dagreD3.graphlib.Graph().setGraph({});
 
-    graph.setNode('意图入口', {
-      shape: 'rect'
+    // 设置一个flowNode
+    graph.setNode(node.description, { shape: node.nodeShapeType });
+
+    render(flowGroup, graph);
+    // TODO: rebuild
+    flowGroup.on('click', function () {
+      const newNode = {
+        type: 1,
+        description: '特使',
+        nodeShapeType: 'arrow'
+      };
+      flowSVG.renderFlowNode(ele, newNode);
     });
-    // graph
-   render(flowGroup, graph);
-   // TODO: rebuild
-   flowGroup.on('click', function(){
-    //  console.log('trigger click by yitu')
-   });
-    // gf.setNode(this.shape.description, {
-    //   shape: shapeType
-    // });
-    // render(this.svg, gf);
   }
-  // setFlow
+
+  /**
+   * @description 获得scene数组数据
+   */
   getSceneDialog(): void {
     this.sceneService
       .getSceneDialogs()
@@ -130,8 +122,11 @@ export class FlowComponent implements OnInit {
       });
   }
 
-
-  buildFlowChart(flowNode ? : any): void {
+  /**
+   * #abandon
+   * @param flowNode 
+   */
+  buildFlowChart(flowNode?: any): void {
     const svg: any = d3.select('.flow').append('svg')
       .attr('class', 'lowChart')
       .attr('width', '2500')
