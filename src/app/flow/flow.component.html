@@ -1,0 +1,12 @@
+<!-- TODO:样式入口不对 -->
+<div class="flow-container">
+    <div class="node-hover" [ngStyle]="{'display': popStatus}" (mouseover)="popover()" (mouseleave)="popleave()">
+        <ul>
+            <li *ngFor="let nt of nodeTypes">
+                <a href="javascript:;">
+                    {{nt}}
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

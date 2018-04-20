@@ -27,3 +27,6 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
 
 2018-03-29 增加本地请求数据 模拟http请求 发现错误 https://github.com/angular/in-memory-web-api/issues/189
+2018-04-09 jsPlumb测试
+2018-04-10 有一些attribute属性不能被使用，例如：contenteditable
+2018-04-16 dagre-d3的@types不能用 过时了全是报错

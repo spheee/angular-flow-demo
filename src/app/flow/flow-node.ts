@@ -5,13 +5,14 @@ import { SVGNode } from '../interface/svgNode';
  * @description 流程图节点的类型
  * @author hsky
  */
-// import { FlowNode } from '../interface/flowNode.interface';
 /**
  * @description 混合实现了Scene和SVGNode两个interface
  */
 export class FlowNode implements Scene, SVGNode {
-  // id:number;
   group: string;
+  /**
+   * @description uuid
+   */
   uuid: string;
   /**
    * @description 场景名称
@@ -29,8 +30,10 @@ export class FlowNode implements Scene, SVGNode {
    * @description 错误时跳转的下一个场景uuid
    */
   errorDialog: string;
+  /**
+   * @description id
+   */
   id: number;
-
   /**
    * @description 节点描述文本
    */
@@ -43,6 +46,10 @@ export class FlowNode implements Scene, SVGNode {
    * @description 绑定事件
    */
   event: Function;
+  /**
+   * @description 可编辑性
+   */
+  editable: boolean;
 
   /**
    * @description 初始化时必须指定场景的类型 TODO:初始化参数需要多几个字段
@@ -56,7 +63,7 @@ export class FlowNode implements Scene, SVGNode {
     switch (dType) {
       // 意图场景
       case 0:
-        this.nodeShapeType = 'rect'; // TODO:意图场景的shape需要重新规划一下
+        this.nodeShapeType = 'enteranceRect'; // TODO:意图场景的shape需要重新规划一下
         break;
         // 实体参数收集
       case 1:

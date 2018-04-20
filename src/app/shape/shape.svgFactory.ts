@@ -33,12 +33,13 @@ export class ShapeSVGFactory {
 
     // let w = this.options.width,
     // h = this.options.height;
+    // render.
     render.shapes().doublerect = function (parent, bbox, node) {
       const w = bbox.width,
         h = bbox.height;
 
-      let svgDefs = parent.append('defs');
-      let rectGroup =
+      const svgDefs = parent.append('defs');
+      const rectGroup =
         svgDefs.append('g').attr('id', 'double-rect');
       rectGroup.append('rect')
         .attr('width', w).attr('height', h)
@@ -48,9 +49,6 @@ export class ShapeSVGFactory {
       rectGroup.append('rect')
         .attr('width', w * 0.8).attr('height', h).attr('x', w * 0.1)
         .style('fill', 'white').style('stroke-width', '1').style('stroke', '#7AB1F4')
-
-
-
       let use =
         parent
         .insert('use', ':first-child')
@@ -179,7 +177,6 @@ export class ShapeSVGFactory {
     };
     // TODO:longrect需要做
     // render.shapes().longrect=function(parent,bbox,node){
-
     // }
 
     let shapeType = 'rect';

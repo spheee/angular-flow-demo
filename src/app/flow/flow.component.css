@@ -1,0 +1,23 @@
+app-flow{
+    width: 100%
+}
+.node-hover{
+    position: absolute;
+    /* display: none */
+ 
+}
+.node-hover li {
+    /* border:  */
+    border-radius: 5px;
+    background: #007EEF;
+    padding: 1px 2px;
+    margin-bottom: 2px;
+}
+.node-hover li>a{
+    color:white;
+}
+
+
+.flowChart g.try  text{
+    fill: blue
+}

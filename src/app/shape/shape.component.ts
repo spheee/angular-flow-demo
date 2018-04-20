@@ -32,6 +32,6 @@ export class ShapeComponent implements OnInit, OnChanges {
     // console.log(this.shape);
   }
   ngOnChanges() {
-    console.log('this is really matters');
+    // console.log('this is really matters');
   }
 }

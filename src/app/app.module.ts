@@ -5,14 +5,13 @@ import { HttpModule } from '@angular/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
-import { dagre } from 'dagre-d3';
+// import { dagre } from 'dagre-d3';
 import * as figlet from 'figlet';
-import { debug } from 'util';
 
 import { AppComponent } from './app.component';
 import { FlowChartComponent } from './flow-chart/flow-chart.component';
 import { InMemoryDataService } from './in-memory-data.service';
-import { SceneService } from './scene.service';
+import { SceneService } from './flow/scene/scene.service';
 import { TestComponentComponent } from './test-component/test-component.component';
 import { TestService } from './ywtest/test.service';
 
@@ -20,6 +19,17 @@ import { TestChildComponent } from './test-component/test-child.component';
 import { HeaderComponent } from './header/header.component';
 import { ShapeComponent } from './shape/shape.component';
 import { FlowComponent } from './flow/flow.component';
+import { NgZorroAntdModule } from 'ng-zorro-antd';
+import { RouteModule } from './route.module';
+
+// import { FlowSvgInfoService } from './flow/flow-svg-info.service';
+
+import { CookieModule } from 'ngx-cookie';
+import { FlowNodesService } from './flow/flow-nodes.service';
+import { SceneDialogService } from './flow/scene/scene-dialog.service';
+import { SvgInfoService } from './flow/svg/svg-info.service';
+
+// import { DataCountPipe } from './data-count.pipe';
 
 
 @NgModule({
@@ -31,27 +41,32 @@ import { FlowComponent } from './flow/flow.component';
     HeaderComponent,
     ShapeComponent,
     FlowComponent,
-    // 如果不想要child组件直接出现 或许封装一层？
+    // 如果不想要child组件直接出现 或许封装一层？.withServerTransition({ appId: 'serverApp' })
   ],
   imports: [
     BrowserModule,
     FormsModule,
     // HttpModule,
     HttpClientModule,
+    RouteModule,
+    CookieModule.forRoot(), // forRoot提供了provider
+    NgZorroAntdModule.forRoot(),
     // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
     // and returns simulated server responses.
     // Remove it when a real server is ready to receive requests.
-    HttpClientInMemoryWebApiModule.forRoot(
-      InMemoryDataService, {
-        dataEncapsulation: false
-      }
-    )
+    
+    // HttpClientInMemoryWebApiModule.forRoot(
+    //   InMemoryDataService, {
+    //     dataEncapsulation: false
+    //   }
+    // )
   ],
-  providers: [TestService, SceneService],
+  providers: [TestService, SceneService, SceneDialogService, SvgInfoService, FlowNodesService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
   constructor(testa: TestService) {
+
     // 这是一个关于泛型的实例 参考 https://www.tslang.cn/docs/handbook/generics.html
     function identity < T > (arg: T): T {
       return arg;
@@ -114,7 +129,7 @@ export class AppModule {
     };
 
 
-    console.log(myGenericNumber.add(myGenericNumber.zeroValue, 2));
+    // console.log(myGenericNumber.add(myGenericNumber.zeroValue, 2));
 
     // 泛型约束
     interface Lengthwise {
@@ -123,7 +138,7 @@ export class AppModule {
 
     // 这个方法与之前两个坑爹的方法截然不同请仔细研究
     function loggingIdentity < T extends Lengthwise > (arg: T): T {
-      console.log(arg.length); // Now we know it has a .length property, so no more error
+      // console.log(arg.length); // Now we know it has a .length property, so no more error
       return arg;
     }
     loggingIdentity('sdjshdj');
@@ -165,7 +180,7 @@ export class AppModule {
     // createInstance(Lion).keeper.nametag;
     // createInstance(Bee).keeper.hasMask;
 
-    console.log(testa.greet('hola yuwen')); // 这里的testa是一个TestService的实例由 providers提供，不需要new，相当于全局固定的
+    // console.log(testa.greet('hola yuwen')); // 这里的testa是一个TestService的实例由 providers提供，不需要new，相当于全局固定的
     console.log(`
      _   _ _   _ _ ____      _____ _ __  
     | | | | | | | '_ \\ \\ /\\ / / _ \\ '_ \\ 

@@ -2,5 +2,11 @@
   <option value="">请选择</option>
   <option *ngFor="let item of students" [ngValue]='item'>{{item.name}}</option>  
 </select>
+
+<ul>
+  <li *ngFor="let it of its">{{it.time+x}}
+  </li>
+  
+
 {{ student | json }}
 <app-test-child></app-test-child>

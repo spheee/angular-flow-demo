@@ -1,12 +1,30 @@
 /**
  * @description 场景对话类型枚举
- * @author hsky<habxp@163.com>
+ * @author hsky
  */
 export enum DialogType {
-    DIALOG_TYPE_INTENT = 0,
-    DIALOG_TYPE_COLLECT = 1,
-    DIALOG_TYPE_JUDGE = 2,
-    DIALOG_TYPE_ACTION = 3,
-    DIALOG_TYPE_RESPOND = 4,
-    DIALOG_TYPE_END = 5
+    /**
+     * @description 意图场景 DIALOG_TYPE_INTENT
+     */
+    意图场景 = 0,
+    /**
+     * @description 参数收集 DIALOG_TYPE_COLLECT
+     */
+    参数收集 = 1,
+    /**
+     * @description 逻辑判断 DIALOG_TYPE_JUDGE
+     */
+    逻辑判断 = 2,
+    /**
+     * @description 动作 DIALOG_TYPE_ACTION
+     */
+    动作 = 3,
+    /**
+     * @description 响应 DIALOG_TYPE_RESPOND
+     */
+    响应 = 4,
+    /**
+     * @description 结束 DIALOG_TYPE_END
+     */
+    结束 = 5
 }

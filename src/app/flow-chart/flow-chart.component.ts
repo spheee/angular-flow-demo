@@ -1,173 +1,164 @@
 import {
-  Component,
-  OnInit
+    AfterViewInit, Attribute, Component, ElementRef, Input, OnInit, ViewChild, Renderer2
 } from '@angular/core';
-import * as d3 from 'd3';
+import { jsPlumb } from 'jsplumb';
 
-import * as dagreD3 from 'dagre-d3';
-import { SceneService } from '../scene.service';
-import { SceneDialog } from '../ywtest/scene-dialog';
-
-
+import { Guid } from '../common/guid';
+import { FlowNode } from '../flow/flow-node';
+import { DialogType } from '../interface/dialogType.enum';
+import { ShapeTypes } from './shape-type';
+import { EnumEx } from '../common/enumEx';
 
 @Component({
   selector: 'app-flow-chart',
   templateUrl: './flow-chart.component.html',
   styleUrls: ['./flow-chart.component.css']
 })
-export class FlowChartComponent implements OnInit {
-
-  sceneDialogs: SceneDialog[];
-
- constructor(private sceneService: SceneService) {}
 
 
+export class FlowChartComponent implements OnInit, AfterViewInit {
+  title = 'jsPlumb demo';
+  jsPlumbInstance;
+  // showConnectionToggle = false;
+  common = {
+    isSource: true,
+    isTarget: true,
+    endpoint: 'Rectangle'
+  };
+  // 入口
+  startNode: FlowNode;
+  model = 'sdkjsdks';
+  ef = false;
+
+  @ViewChild('container') container: ElementRef; // 定义容器视图
+  @ViewChild('start') stater: ElementRef;        // 定义starter视图
+
+  @Input() staterDescription: string;
+  // @Input() eba: boolean;
+
+  // types: ShapeTypes;
+  types: any = DialogType;
+
+
+  constructor(private elRef: ElementRef, private renderer: Renderer2) {
+    this.staterDescription = '车还';
+    // this.eba = false;
+    // this.types= new ShapeTypes();
+    this.startNode = new FlowNode();
+    this.startNode.editable = false;
+    this.startNode.description = '意图入口';
+    const ax = EnumEx.getNames(this.types);
+    const ab = EnumEx.getValues(this.types);
+    const ac = EnumEx.getNamesAndValues(this.types);
+    // debugger
+
+  }
+
+  shape: string;
+  /**
+   * @description shape添加的点击事件
+   * @param e 字符
+   */
+  addShape(e) {
+    const shapeType = this.types[e];
+    this.addNode(shapeType);
+    // const shapeNode = new FlowNode(shapeType);
+    // debugger
+    // console.log('add a shape here ...');
+  }
+  /**
+   * @description 新增一个节点
+   * @param uuid 传入的uuid，可选
+   * @param type 传入的type，可选
+   * @param description 描述，可选
+   */
+  addNode(type ?: number, uuid ?: string, description ?: string) {
+    uuid = uuid || new Guid().newGuid(),
+      type = type || 0;
+    description = description || '测试ADD';
+    const newNode = new FlowNode(type);
+    newNode.uuid = uuid;
+    newNode.description = description;
+    this.renderNode(this.container, newNode);
+    // this.flowNodes.push(newNode);
+    // this.renderFlowSVG(this.flowNodes);
+  }
+  /**
+   * @description 渲染一个节点
+   * @param parent 容器
+   * @param node 节点
+   */
+  renderNode(parent: any, node: FlowNode) {
+    const div = this.renderer.createElement('div');
+    // debugger
+    this.renderer.setAttribute(div, 'class', 'node ' + node.nodeShapeType);
+    this.renderer.setAttribute(div, 'id', node.uuid);
+    const text = this.renderer.createText(node.description);
+    this.renderer.appendChild( div, text );
+    this.renderer.appendChild( this.container.nativeElement, div);
+    this.jsPlumbInstance.draggable(div);
+    this.jsPlumbInstance.addEndpoint(div, {
+      // anchor: 'Left',
+      endpoint: 'Rectangle'
+    }, this.common);
+
+    // this.jsPlumbInstance.addEndpoint(parent)
+  }
+  renderLink() {
+
+  }
+
+  /**
+   * @deprecated 使用EnumEx的静态方法替代
+   * @description 解析枚举
+   * @returns 枚举对应的数组
+   */
+  typeKeys(): Array < string > {
+    // object ==> array
+    const keys = Object.keys(this.types);
+    return keys.slice(keys.length / 2);
+  }
   ngOnInit() {
-    this.buildFlowChart();
-    this.getSceneDialog();
+
   }
 
-  getSceneDialog(): void {
-    this.sceneService
-      .getSceneDialogs()
-      .subscribe(sceneDialogs => {
-        this.sceneDialogs = sceneDialogs;
-        console.log(this.sceneDialogs);
-      });
-  }
-
-
-  buildFlowChart(flowNode ?: any): void {
-    const svg: any = d3.select('.flow').append('svg')
-      .attr('class', 'lowChart')
-      .attr('width', '2500')
-      .attr('height', '1200');
-
-    const g = new dagreD3.graphlib.Graph()
-      .setGraph({
-        rankdir: 'LR'
-      })
-      .setDefaultEdgeLabel(function () {
-        return {};
-      });
-    const states = [{
-        label: '变更机票',
-        id: 0,
-        pid: -1
-      }, {
-        label: '参数搜索',
-        id: 1,
-        pid: 0,
-
-      }, {
-        id: 2,
-        pid: 1,
-        label: '响应：查询客票信息',
-        shape: 'rect',
-        class: "predefinition third"
-      }, {
-        id: 3,
-        pid: 2,
-        label: "逻辑判断",
-        shape: "diamond"
-      }, {
-        id: 4,
-        pid: 3,
-        label: "响应：告知旅客",
-        description: "航班正常",
-        class: "predefinition"
-      }, {
-        id: 5,
-        pid: 3,
-        description: "航班取消/延误",
-        label: "响应：确认起飞时间",
-        class: "predefinition"
-      }, {
-        id: 6,
-        pid: 4,
-        // description: "航班取消/延误",
-        label: "结束"
-      },
-      {
-        id: 7,
-        pid: 5,
-        label: "参数搜索",
-        class: "predefinition"
-      },
-      {
-        id: 8,
-        pid: 7,
-        label: "逻辑判断",
-        shape: "diamond"
-      }, {
-        id: 9,
-        pid: 8,
-        label: "响应：发送新的航班信息",
-        shape: "rect",
-        description: "同意",
-        class: "predefinition"
-      }, {
-        id: 10,
-        pid: 8,
-        label: "响应：查询新的航班信息",
-        shape: "rect",
-        description: "不同意",
-        class: "predefinition third"
-      }, {
-        id: 6,
-        pid: 9,
-        // description: "航班取消/延误",
-        label: "结束"
-      }, {
-        id: 11,
-        pid: 10,
-        label: "逻辑判断",
-        shape: "diamond"
-      },
-      {
-        id: 12,
-        pid: 11,
-        description: "无航班或无票",
-        label: "响应：告知旅客"
-      },
-      {
-        id: 13,
-        pid: 11,
-        description: "无经济舱票",
-        label: "响应：告知旅客"
-
-      }, {
-        id: 14,
-        pid: 11,
-        label: "经济舱有票可控位",
-        // label: "响应：跳至确认起飞时间"
-      }, {
-        id: 6,
-        pid: 12,
-        // description: "航班取消/延误",
-        label: "结束"
-      }
-    ];
-    const printedArr: number[] = [];
-    states.forEach(function (v) {
-      v['rx'] = v['ry'] = 5;
-      g.setNode(v.id, v);
-      // printedArr.push(new Array().concat(v.id, v.nid))
-      // if (v.nid && v.nid.length > 0) {
-      //     for (let index = 0; index < v.nid.length; index++) {
-      //         const element = v.nid[index];
-      //         g.setEdge(v.id,element,{label:v.description})
-      //         console.log(element)
-      //     }
-      // }
-      if (v.pid >= 0) {
-        g.setEdge(v.pid, v.id, {
-          label: v['description']
-        });
-      }
+  ngAfterViewInit() {
+    const self = this;
+    this.jsPlumbInstance = jsPlumb.getInstance();
+    // 默认设置
+    this.jsPlumbInstance.importDefaults({
+      Connector : [ 'Flowchart', { stub: 20 , cornerRadius: 2.5} ],
+      ConnectionOverlays: [[ "Arrow", { width:10, length:10, location:0.5, id:"arrow" ,paintStyle:{
+        // fill:'red'
+      }} ]],
+      MaxConnections: 2
     });
-    g.setEdge(0, 1);
-    const render = new dagreD3.render();
-    render(d3.select('svg'), g);
+    // debugger
+    // self.container.nativeElement.contentEditable = true;
+    this.jsPlumbInstance.ready(() => {
+      this.jsPlumbInstance.setContainer(self.container.nativeElement);
+      this.jsPlumbInstance.draggable(self.stater.nativeElement);
+    });
+    this.jsPlumbInstance.addEndpoint(self.stater.nativeElement, {
+      anchor: '',
+      endpoint: ['Dot',{
+        radius: '2.5'
+      }],
+      overlays: [
+        // [ "Label", { label:"foo", id:"label", location:[-0.5, -0.5] } ]
+      ],
+      connectorOverlays: [ 
+        // [ "Arrow", { width:10, length:10, location:0.5, id:"arrow" ,paintStyle:{
+        //   // fill:'red'
+        // }} ],
+        // [ "Label", { label:"foo", id:"label" } ]
+      ]
+      
+    }, this.common);
+
+  }
+  setNodeName(event) {
+    event.target.contentEditable = true;
+    // this.startNode.editable=true;
   }
 }

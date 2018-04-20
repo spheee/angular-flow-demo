@@ -1,13 +1,10 @@
-/**
- * @author hsky<habxp@163.com>
- * @since 2018-03-29 16:26:06
- */
+
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable} from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 
-import { SceneDialog } from './ywtest/scene-dialog';
+import { SceneDialog } from './scene-dialog';
 
 
 const httpOptions = {
@@ -18,10 +15,16 @@ const httpOptions = {
 @Injectable()
 export class SceneService {
 
-  private apiURL = 'api/sceneDialogs'; // URL to web api
+  private apiURL = '/api/sceneDialogs'; // URL to web api
 
   constructor(private http: HttpClient) {
     console.log(`this is sceneService...`);
+
+    this.getProduct().subscribe(
+      ret => {
+        console.log(ret);
+      }
+    );
   }
   /** GET SceneDialog from the server */
   getSceneDialogs(): Observable < SceneDialog[] > {
@@ -29,6 +32,13 @@ export class SceneService {
       .pipe(
         tap(sceneDialogs => console.log('we got scenes from DB', sceneDialogs)),
         catchError(this.handleError('load scenes', []))
+      );
+  }
+  getProduct(): Observable<Object[]> {
+    const pUrl = '/api/products';
+    return this.http.get<Object[]>(pUrl)
+      .pipe(
+        tap(ret => console.log(ret))
       );
   }
 
