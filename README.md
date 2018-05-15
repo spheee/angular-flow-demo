@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # YwMultipleConversation
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.7.3.
@@ -31,3 +32,7 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 2018-04-10 有一些attribute属性不能被使用，例如：contenteditable
 2018-04-16 dagre-d3的@types不能用 过时了全是报错
 2018-04-19 proxy正向代理+nginx反向代理
+=======
+# angular-flow-demo
+flow-chart demo based on Angular
+>>>>>>> d8d55ee4ac95bc270afa47e41982f6c4a4d48959
