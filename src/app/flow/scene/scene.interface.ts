@@ -9,6 +9,10 @@ export interface Scene {
      */
     id: number;
     /**
+     * @description 场景组id
+     */
+    groupId: string;
+    /**
      * @description 场景组
      */
     group: string;

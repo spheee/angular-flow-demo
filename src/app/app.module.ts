@@ -28,6 +28,10 @@ import { CookieModule } from 'ngx-cookie';
 import { FlowNodesService } from './flow/flow-nodes.service';
 import { SceneDialogService } from './flow/scene/scene-dialog.service';
 import { SvgInfoService } from './flow/svg/svg-info.service';
+import { DialogComponent } from './dialog/dialog.component';
+import { EditorModule } from './editor';
+
+// import { EditorComponent } from './editor/editor.component';
 
 // import { DataCountPipe } from './data-count.pipe';
 
@@ -41,20 +45,22 @@ import { SvgInfoService } from './flow/svg/svg-info.service';
     HeaderComponent,
     ShapeComponent,
     FlowComponent,
+    DialogComponent,
+    // EditorComponent,
     // 如果不想要child组件直接出现 或许封装一层？.withServerTransition({ appId: 'serverApp' })
   ],
   imports: [
+    EditorModule,
     BrowserModule,
     FormsModule,
     // HttpModule,
     HttpClientModule,
     RouteModule,
     CookieModule.forRoot(), // forRoot提供了provider
-    NgZorroAntdModule.forRoot(),
+    NgZorroAntdModule.forRoot({ extraFontName: 'anticon', extraFontUrl: './assets/fonts/iconfont' }),
     // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
     // and returns simulated server responses.
     // Remove it when a real server is ready to receive requests.
-    
     // HttpClientInMemoryWebApiModule.forRoot(
     //   InMemoryDataService, {
     //     dataEncapsulation: false

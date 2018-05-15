@@ -30,3 +30,4 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 2018-04-09 jsPlumb测试
 2018-04-10 有一些attribute属性不能被使用，例如：contenteditable
 2018-04-16 dagre-d3的@types不能用 过时了全是报错
+2018-04-19 proxy正向代理+nginx反向代理

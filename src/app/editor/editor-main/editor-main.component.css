@@ -1,0 +1,32 @@
+.flow{
+    height: 100%;
+    border: 1px dashed #fff;
+}
+.flow-container{
+    background: url(data:image/gif;base64,R0lGODlhCgAKAIAAAPPz89/f3ywAAAAACgAKAAACEQyOaJnL515ksz11YQah+18AADs=)!important;
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+.flow-svg{
+    height: 100%;
+    width: 100%;
+}
+.line{
+    stroke:#333333;
+}
+.node{
+    cursor: pointer;
+}
+.node rect,.node polygon{
+    fill: #fff;
+    stroke: blue;
+}
+.node text{
+    font-size: 16px;
+    fill: #333333;
+}
+
+.entrance{
+    fill: blue;
+}

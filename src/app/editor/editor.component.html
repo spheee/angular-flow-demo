@@ -1,0 +1,47 @@
+<nz-layout class="editor">
+  <nz-header style="height: 40px;background: #ffffff">
+    <app-editor-header></app-editor-header>
+  </nz-header>
+  <nz-layout>
+
+    <nz-sider nzCollapsible [(nzCollapsed)]="isCollapsed">
+
+      <ul class="editorType" nz-menu [nzTheme]="'dark'" [nzMode]="isCollapsed?'inline':'vertical'">
+
+        <li nz-menu-item (mousedown)="onDragStart('1',$event)">
+          参数
+        </li>
+
+        <li nz-menu-item (mousedown)="onDragStart('2',$event)">
+          判断
+        </li>
+        <li nz-menu-item (mousedown)="onDragStart('4',$event)">
+          响应
+        </li>
+        <!-- <li nz-menu-item (mousedown)="onDragStart('0',$event)">
+          参数收集
+        </li> -->
+        <li nz-menu-item (mousedown)="onDragStart('5',$event)">
+          退出
+        </li>
+        <li nz-menu-item (mousedown)="onDragStart('3',$event)"> 
+          动作
+        </li>
+        <!-- <span><i class="anticon anticon-file"></i><span class="nav-text">File</span></span> -->
+      </ul>
+    </nz-sider>
+
+    <nz-content>
+
+      <app-editor-main #editorMain style="height: 100%;display: block;padding: 5px;"></app-editor-main>
+
+    </nz-content>
+  </nz-layout>
+
+  <nz-footer>Footer</nz-footer>
+  <ng-container *ngIf="isOnAdd">
+      <div class="editor-drag" #dragContent>
+        切个图
+      </div>
+      </ng-container>
+</nz-layout>
