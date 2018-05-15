@@ -1,11 +1,15 @@
-import { Component, OnInit , ElementRef, Renderer2, ViewChild, HostListener, AfterContentChecked, AfterViewInit} from '@angular/core';
+import {
+    AfterContentChecked, AfterViewInit, Component, ElementRef, HostListener, OnInit, Renderer2,
+    ViewChild
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import * as d3 from 'd3';
 import * as dagreD3 from 'dagre-d3';
-import {Guid} from '../../common/guid';
-import { SceneDialog } from '../../flow/scene/scene-dialog';
+import 'rxjs/add/operator/debounceTime';
+
+import { Guid } from '../../common/guid';
 import '../../common/intersect';
-import 'rxjs/add/operator/debounceTime'
+import { SceneDialog } from '../../flow/scene/scene-dialog';
 import { EditorActionService } from '../editor-action.service';
 
 @Component({
@@ -14,15 +18,12 @@ import { EditorActionService } from '../editor-action.service';
   styleUrls: ['./editor-main.component.css']
 })
 export class EditorMainComponent implements OnInit, AfterContentChecked {
-
+  // 定义容器
   @ViewChild('flow') flow: ElementRef;
   @ViewChild('flowContainer') flowContainer: ElementRef;
   @ViewChild('flowPops') flowPops: ElementRef;
   @ViewChild('flowSVG') flowSVG: ElementRef;
   @ViewChild('flowGraph') flowGraph: ElementRef;
-
-  // flowSvg: any;
-
   /**
    * @description 当前选中状态的会话
    */
@@ -32,8 +33,6 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
    */
   groupId: string;
 
-
-
   flowLabels: any;
   /**
    * @description 连线
@@ -42,22 +41,22 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
   /**
    * @description
    */
-  flowNodes: any;
+  flowNodes: Array<CalDialog>;
 
 
   defaultOptions = {
     /**
      * @description 排列方向
      */
-    rankDir : 'TB',
+    rankDir: 'TB',
     /**
      * @description 节点 x 轴方向间距
      */
-    nodeSep: 150,
+    nodeSep: 100,
     /**
      * @description 节点 y 轴方向间距
      */
-    rankSep:  80
+    rankSep: 80
   };
 
 
@@ -76,7 +75,7 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
     y: 100
   };
 
-  positionArray: Array<Position>;
+  positionArray: Array < Position > ;
 
   /**
    * @description 拖拽节点
@@ -85,32 +84,45 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
   /**
    * @description 起点
    */
-  draggingStart: { x: number, y: number };
+  draggingStart: {
+    x: number,
+    y: number
+  };
 
   /**
    * @description 信息点位置
    */
-  infoNode ={ x:0,y:0}
-
+  infoNode = {
+    x: 0,
+    y: 0
+  };
+  /**
+   * @description 画布是否拖拽
+   */
   isGraphOnDrag = false;
 
-
-
-
-  constructor(private route: ActivatedRoute, private ele: ElementRef,private editorActionService:EditorActionService,
-  private render:Renderer2) {
-    // console.log(this.flow.nativeElement.width);
-    editorActionService.addNode.subscribe(res=>{
+  constructor(
+    private route: ActivatedRoute,
+    private ele: ElementRef,
+    private editorActionService: EditorActionService,
+    private render: Renderer2) {
+    // 响应添加节点事件
+    editorActionService.addNode.subscribe(res => {
       this.addNode(res.type, res.position);
     });
-   }
+  }
 
   ngOnInit() {
+    // 获得当前路由中的groupId
     this.groupId = this.route.snapshot.paramMap.get('group-id');
     this.initFlowSVG();
   }
   ngAfterContentChecked() {
-    this.infoNode = { x : this.ele.nativeElement.clientWidth - 150 , y : 20};
+    // 信息点坐标
+    this.infoNode = {
+      x: this.ele.nativeElement.clientWidth - 150,
+      y: 20
+    };
   }
   /**
    * @description 初始化flow svg 图形
@@ -161,34 +173,104 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
       group: '测试组',
       groupId: 11
     };
+    const dialogs = [
+      {
+        id: 1,
+        name: 'test',
+        dialogType: 0,
+        nextDialog: '222',
+        uuid: '111',
+        group: '测试组',
+        groupId: 11
+      }, {
+        id: 2,
+        name: 'test',
+        dialogType: 1,
+        nextDialog: '333',
+        uuid: '222',
+        group: '测试组',
+        groupId: 11
+      }, {
+        id: 3,
+        name: 'test',
+        dialogType: 2,
+        nextDialog: '',
+        uuid: '333',
+        group: '测试组',
+        groupId: 11
+      }, {
+        id: 4,
+        name: 'test',
+        dialogType: 2,
+        nextDialog: '555',
+        uuid: '444',
+        group: '测试组',
+        groupId: 11,
+        isVirtual: true,
+        virtualIndex: 1,
+        prevDialog: '333'
+      }, {
+        id: 5,
+        name: 'test',
+        dialogType: 2,
+        nextDialog: '777',
+        uuid: '666',
+        group: '测试组',
+        groupId: 11,
+        isVirtual: true,
+        virtualIndex: 2,
+        prevDialog: '444'
+      }, {
+        id: 6,
+        name: 'test',
+        dialogType: 3,
+        nextDialog: '',
+        uuid: '555',
+        group: '测试组',
+        groupId: 11,
+      }, {
+        id: 7,
+        name: 'test',
+        dialogType: 4,
+        nextDialog: '',
+        uuid: '777',
+        group: '测试组',
+        groupId: 11,
+      }
+    ];
 
-    this.setNodes([ttrs, ttrs,ttrv,ttrf]);
+    this.setNodes(dialogs);
     // this.tryLinks();
     // this.flowNodes = [ttrs,ttrs];
 
     // d3.selectAll('.node').call(d3.drag()).on('started', function() {
-      // const circle = d3.select(this).classed('dragging', true);
+    // const circle = d3.select(this).classed('dragging', true);
 
-      // d3.event.on('drag', dragged).on('end', ended);
-      // function dragged(d) {
-      //   circle.raise().attr('cx', d.x = d3.event.x).attr('cy', d.y = d3.event.y);
-      // }
-      // function ended() {
-      //   circle.classed('dragging', false);
-      // }
+    // d3.event.on('drag', dragged).on('end', ended);
+    // function dragged(d) {
+    //   circle.raise().attr('cx', d.x = d3.event.x).attr('cy', d.y = d3.event.y);
+    // }
+    // function ended() {
+    //   circle.classed('dragging', false);
+    // }
     // });
   }
+  /**
+   * @description 添加节点
+   * @param {number} type 节点类型
+   * @param {Position} position 节点坐标
+   */
   addNode(type: number, position: Position) {
     const newUuid = new Guid().uuid(8, 16);
     const newNode: Dialog = {
-      name:'点击修改名称',
-      dialogType:type,
-      nextDialog:'',
-      uuid:newUuid,
-      group:'测试',
-      groupId:1000,
+      name: '点击修改名称',
+      dialogType: type,
+      nextDialog: '',
+      uuid: newUuid,
+      group: '测试',
+      groupId: 1000,
     };
-    this.flowNodes.push(Object.assign(newNode, position))
+    this.flowNodes.push(Object.assign(newNode, position));
     // return ;
   }
   // tryAdd(){
@@ -196,14 +278,17 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
   // }
   tryLinks() {
     const lines = [];
-    this.flowNodes.forEach((value , index , arr) => {
+    this.flowNodes.forEach((value, index, arr) => {
       if (index === 0) {
-        return ;
+        return;
       }
       // 这两个数值可以调整的
-      const Xfix = 30, Yfix = 20;
+      const Xfix = 30,
+        Yfix = 20;
       // console.log(`M${arr[ index - 1].x},${arr[ index - 1].y} L${value.x},${value.y}`);
-      lines.push({  d : `M${arr[ index - 1].x + Xfix},${arr[ index - 1].y + Yfix} L${value.x + Xfix},${value.y + Yfix}`});
+      lines.push({
+        d: `M${arr[ index - 1].x + Xfix},${arr[ index - 1].y + Yfix} L${value.x + Xfix},${value.y + Yfix}`
+      });
     });
     this.flowLines = lines;
   }
@@ -212,10 +297,10 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
    * @description 设置节点
    * @param dialog
    */
-  setNodes(dialogs: Array<Dialog>): void {
+  setNodes(dialogs: Array < Dialog > ): void {
     const calArray = [];
 
-     dialogs.forEach((dialog, index) =>  {
+    dialogs.forEach((dialog, index) => {
       // intersectRect
       // 自动 计算节点位置
       let calDialog = new CalDialog();
@@ -225,28 +310,50 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
       calDialog.y = 0;
       calArray.push(calDialog);
     });
+    this.flowNodes = calArray;
     this.calculateNodes(calArray);
   }
 
   /**
+   * @description 递归查找当前母体
+   * @param prevId 当前虚拟节点的prev Uuid
+   */
+  findPrev(prevId: string): number {
+    const prevIndex = this.flowNodes.findIndex((node, index) => node.uuid === prevId);
+    if (prevIndex !== -1 ) {
+      if (this.flowNodes[prevIndex].isVirtual) {
+        return this.findPrev(this.flowNodes[prevIndex].prevDialog);
+      } else {
+        return prevIndex;
+      }
+    }
+  }
+  /**
    * @description 计算布局
    * @param {Array<CalDialog>} calArray 绘制节点数组
    */
-  calculateNodes(calArray: Array<CalDialog>): void {
+  calculateNodes(calArray: Array < CalDialog > ): void {
     // 初始化坐标
-    let x = this.defaultPosition.x, y = this.defaultPosition.y;
-    calArray.forEach((value, index) => {
-      if ( value.dialogType === 2 && value.isVirtual) {
+    let xAxisIndex = 0, yAxisIndex = 0;
+    calArray.forEach((value, index , arr) => {
+      let x = this.defaultPosition.x,
+      y = this.defaultPosition.y;
+      if (value.dialogType === 2 && value.isVirtual) {
+        // let yTempIndex = this.findPrev(value.prevDialog);
+        // console.log(yTempIndex);
         // 虚拟节点 另外一个方向延伸
-          x = x;
-          y = value.virtualIndex * this.defaultOptions.rankSep;
+        // arr.findIndex()
+        // x = x + this.defaultOptions.nodeSep * xAxisIndex;
+        // y = y + value.virtualIndex * this.defaultOptions.rankSep;
       } else {
-        x = x + this.defaultOptions.nodeSep * index;
+        x = x + this.defaultOptions.nodeSep * xAxisIndex;
         y = y;
+        // 正常的节点 x+1
+        xAxisIndex++;
       }
       value.x = x;
       value.y = y;
-      console.log(x,y)
+      console.log(x, y);
     });
     this.flowNodes = calArray;
   }
@@ -258,42 +365,35 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
   modifyName(node, $event): void {
 
   }
-  modifyDetail(node, $event): void {
-  }
+  modifyDetail(node, $event): void {}
   /**
    * @description 重置初始位置
    */
   reset() {
     // graph 归位
     const graphTransform = `translate(0,0)`;
-    this.render.setAttribute(this.flowGraph.nativeElement,'transform',graphTransform);
+    this.render.setAttribute(this.flowGraph.nativeElement, 'transform', graphTransform);
     this.autoSort();
   }
   /**
    * @description 自动排序布局
    */
   autoSort() {
-    this.flowNodes.forEach((value, index) => {
-      let x = 0, y = 0;
-      if (value.dialogType === 2) {
-        // 计算子节点深度 index
-        y = this.defaultPosition.y + 1 * this.defaultOptions.rankSep;
-        x = this.defaultPosition.x + ( index - 1 ) * this.defaultOptions.nodeSep;
-      } else {
-        x = this.defaultPosition.x + index * this.defaultOptions.nodeSep;
-        y = this.defaultPosition.y;
-      }
-      value.x = x;
-      value.y = y;
-    });
+    this.calculateNodes(this.flowNodes);
     this.tryLinks();
   }
 
-
-
+  /**
+   * @description 节点拖动事件开始
+   * @param node 节点信息
+   * @param {MouseEvent} $event 鼠标事件
+   */
   onDragStart(node, $event: MouseEvent): void {
     this.draggingNode = node;
-    this.draggingStart = { x: $event.x - node.x, y: $event.y - node.y };
+    this.draggingStart = {
+      x: $event.x - node.x,
+      y: $event.y - node.y
+    };
     this.draggingNode.x = $event.x - this.draggingStart.x;
     this.draggingNode.y = $event.y - this.draggingStart.y;
   }
@@ -303,9 +403,12 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
    */
   @HostListener('mousedown', ['$event.target', '$event'])
   onGraphDrag(ele, $event: MouseEvent): void {
-    if ( ele.className.baseVal === 'flow-svg') {
+    if (ele.className.baseVal === 'flow-svg') {
       this.isGraphOnDrag = true;
-      this.draggingStart = {x: $event.x, y: $event.y};
+      this.draggingStart = {
+        x: $event.x,
+        y: $event.y
+      };
     } else {
       return;
     }
@@ -317,19 +420,19 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
     //   return;
     // } else {
     // debugger
-      
-    
+
+
     // }
     // 逻辑写反了
-  // const graphTransform = `translate(-${$event.x},-${$event.y})`;
-  // this.render.setAttribute(this.flowSVG.nativeElement, 'transform', graphTransform );
-  // this.flowSVG.nativeElement.
+    // const graphTransform = `translate(-${$event.x},-${$event.y})`;
+    // this.render.setAttribute(this.flowSVG.nativeElement, 'transform', graphTransform );
+    // this.flowSVG.nativeElement.
   }
 
   @HostListener('document:mousemove', ['$event'])
   onDrag($event: MouseEvent): void {
     // 减去偏移值
-    this.mousePosition.x = $event.x - this.flowContainer.nativeElement.offsetLeft; 
+    this.mousePosition.x = $event.x - this.flowContainer.nativeElement.offsetLeft;
     this.mousePosition.y = $event.y - this.flowContainer.nativeElement.offsetTop;
 
     // debugger
@@ -342,7 +445,7 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
       // draggingStart
       const graphTransform = `translate(${$event.x - this.draggingStart.x},${$event.y - this.draggingStart.y})`;
       this.render.setAttribute(this.flowGraph.nativeElement, 'transform', graphTransform);
-    } else if ( this.draggingNode) {
+    } else if (this.draggingNode) {
       this.render.setStyle($event.srcElement, 'cursor', 'move');
       this.draggingNode.x = $event.x - this.draggingStart.x;
       this.draggingNode.y = $event.y - this.draggingStart.y;
@@ -360,7 +463,7 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
     //   return;
     // }
     if (this.isGraphOnDrag) {
-       this.isGraphOnDrag = false;
+      this.isGraphOnDrag = false;
     } else {
       this.draggingNode = undefined;
     }
@@ -383,22 +486,22 @@ interface Position {
 
 class Dialog {
 
-  id?: number;
+  id ? : number;
   name: string;
-  dialogType:number;
+  dialogType: number;
   nextDialog: string;
-  prevDialog?: string;
-  errorDialog?:string;
-  del?:number;
-  uuid:string;
-  group:string;
-  groupId:number;
-  children?:Array<any>;
+  prevDialog ? : string;
+  errorDialog ? : string;
+  del ? : number;
+  uuid: string;
+  group: string;
+  groupId: number;
+  children ? : Array < any > ;
 }
 /**
  * @description 页面会话节点
  */
- class CalDialog extends Dialog implements Position{
+class CalDialog extends Dialog implements Position {
   x: number;
   y: number;
 
@@ -409,16 +512,16 @@ class Dialog {
   /**
    * @description 虚拟节点深度 即children index
    */
-  virtualIndex: number;
-  id?: number;
+  virtualIndex?: number;
+  id ? : number;
   name: string;
-  dialogType:number;
+  dialogType: number;
   nextDialog: string;
-  prevDialog?: string;
-  errorDialog?:string;
-  del?:number;
-  uuid:string;
-  group:string;
-  groupId:number;
-  children?:Array<any>;
- }
+  prevDialog ? : string;
+  errorDialog ? : string;
+  del ? : number;
+  uuid: string;
+  group: string;
+  groupId: number;
+  children ? : Array < any > ;
+}
