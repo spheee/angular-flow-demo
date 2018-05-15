@@ -23,8 +23,10 @@
             [attr.id]="node.id|| node.uuid"
             [attr.transform]="textTranslate(node.x,node.y)">
                 <svg:rect class="entrance" *ngIf="node.dialogType == 0" 
-                [attr.width]="60" 
+                [attr.width]="node.svg.width" 
                 [attr.height]="30"
+                [attr.x]="node.intersection.left"
+                [attr.y]="node.intersection.top"                
                 [attr.rx]="10"
                 [attr.ry]="10">
                 </svg:rect>
@@ -43,15 +45,26 @@
                 [attr.rx]="10"
                 [attr.ry]="10">
                 </svg:rect>
+                <svg:rect class="respond" *ngIf="node.dialogType == 4" 
+                [attr.width]="60" 
+                [attr.height]="30"
+                [attr.rx]="10"
+                [attr.ry]="10">
+                </svg:rect>
+                <svg:rect class="end" *ngIf="node.dialogType == 5" 
+                [attr.width]="60" 
+                [attr.height]="30"
+                [attr.rx]="10"
+                [attr.ry]="10">
+                </svg:rect>
                 <svg:text text-anchor="middle"
-                [attr.x]="30"
-                [attr.y]="20"
+                [attr.x]="node.label.x"
+                [attr.y]="node.label.y"
                 >{{node.name}}</svg:text>
             </svg:g>
     
           </svg:g>
       </svg:g>
-     
     </svg>
   </div>
   <div class="flow-pops" #flowPops></div>

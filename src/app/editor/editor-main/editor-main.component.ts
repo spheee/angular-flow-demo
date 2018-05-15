@@ -46,6 +46,10 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
 
   defaultOptions = {
     /**
+     * @description 字体大小
+     */
+    fontSize: 16,
+    /**
      * @description 排列方向
      */
     rankDir: 'TB',
@@ -60,6 +64,13 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
   };
 
 
+  /**
+   * @description 保存的画布位置
+   */
+  graphPosition = {
+    x: 0,
+    y: 0
+  };
   /**
    * @description 鼠标位置
    */
@@ -176,7 +187,7 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
     const dialogs = [
       {
         id: 1,
-        name: 'test',
+        name: '流程图入口sdasdas',
         dialogType: 0,
         nextDialog: '222',
         uuid: '111',
@@ -240,6 +251,7 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
     ];
 
     this.setNodes(dialogs);
+    this.tryLinks();
     // this.tryLinks();
     // this.flowNodes = [ttrs,ttrs];
 
@@ -283,8 +295,8 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
         return;
       }
       // 这两个数值可以调整的
-      const Xfix = 30,
-        Yfix = 20;
+      const Xfix = 0,
+        Yfix = 0;
       // console.log(`M${arr[ index - 1].x},${arr[ index - 1].y} L${value.x},${value.y}`);
       lines.push({
         d: `M${arr[ index - 1].x + Xfix},${arr[ index - 1].y + Yfix} L${value.x + Xfix},${value.y + Yfix}`
@@ -335,7 +347,9 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
   calculateNodes(calArray: Array < CalDialog > ): void {
     // 初始化坐标
     let xAxisIndex = 0, yAxisIndex = 0;
+    let xAxis = 0, yAxis = 0;
     calArray.forEach((value, index , arr) => {
+      this.calculateNode(value);
       let x = this.defaultPosition.x,
       y = this.defaultPosition.y;
       if (value.dialogType === 2 && value.isVirtual) {
@@ -343,19 +357,67 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
         // console.log(yTempIndex);
         // 虚拟节点 另外一个方向延伸
         // arr.findIndex()
-        x = x + this.defaultOptions.nodeSep * xAxisIndex;
-        y = y + value.virtualIndex * this.defaultOptions.rankSep;
+        // yAxisIndex++;
+        // x = x + this.defaultOptions.nodeSep * xAxisIndex;
+        // y = y + value.virtualIndex * this.defaultOptions.rankSep;
       } else {
-        x = x + this.defaultOptions.nodeSep * xAxisIndex;
-        y = y;
-        // 正常的节点 x+1
         xAxisIndex++;
+        x = x + this.defaultOptions.nodeSep * xAxisIndex;
+        y = y + this.defaultOptions.rankSep * yAxisIndex;
+        // 正常的节点 x+1
       }
       value.x = x;
       value.y = y;
-      console.log(x, y);
+      // console.log(x, y);
     });
     this.flowNodes = calArray;
+  }
+
+
+gblen = function (str) {
+  let len = 0;
+  for (let i = 0; i < str.length; i++) {
+    if (str.charCodeAt(i) > 127 || str.charCodeAt(i) === 94) {
+      len += 2;
+    } else {
+      len++;
+    }
+  }
+  return len;
+};
+
+  /**
+   * @description 计算节点
+   * @param {CalDialog} calDialog 需要绘制的节点
+   */
+  calculateNode(calDialog: CalDialog): void {
+    calDialog.intersection = {
+      left: 0,
+      right: 0,
+      top: 0,
+      bottom: 0
+    };
+    calDialog.label = {
+      x: 0,
+      y: 0
+    };
+    calDialog.svg = {
+      width: 0,
+      points: []
+    };
+    switch (calDialog.dialogType) {
+      case 0:
+        const width = this.gblen(calDialog.name) * 8 + 15 * 2;
+        calDialog.svg.width = width;
+        calDialog.intersection.left = - width / 2;
+        calDialog.intersection.right =  width / 2;
+        calDialog.intersection.top = - 20;
+        calDialog.intersection.bottom = 10;
+        break;
+    
+      default:
+        break;
+    }
   }
 
   textTranslate(x, y) {
@@ -412,57 +474,42 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
     } else {
       return;
     }
-
-
-
-    // 拖拽节点则矛盾
-    // if (this.draggingNode) {
-    //   return;
-    // } else {
-    // debugger
-
-
-    // }
-    // 逻辑写反了
-    // const graphTransform = `translate(-${$event.x},-${$event.y})`;
-    // this.render.setAttribute(this.flowSVG.nativeElement, 'transform', graphTransform );
-    // this.flowSVG.nativeElement.
   }
-
-  @HostListener('document:mousemove', ['$event'])
-  onDrag($event: MouseEvent): void {
+  @HostListener('mousemove', ['$event.target', '$event'])
+  onDrag(ele, $event: MouseEvent): void {
     // 减去偏移值
     this.mousePosition.x = $event.x - this.flowContainer.nativeElement.offsetLeft;
     this.mousePosition.y = $event.y - this.flowContainer.nativeElement.offsetTop;
-
     // debugger
     // if (!this.draggingNode) {
     //   return;
     // }
     if (this.isGraphOnDrag) {
+      // ele.setAttribute('cursor', 'move');
       this.render.setStyle($event.srcElement, 'cursor', 'move');
-      // $event.srcElement.style.cursor = 'pointer';
-      // draggingStart
-      const graphTransform = `translate(${$event.x - this.draggingStart.x},${$event.y - this.draggingStart.y})`;
+      const graphX = this.graphPosition.x + $event.x - this.draggingStart.x;
+      const graphY = this.graphPosition.y + $event.y - this.draggingStart.y;
+      const graphTransform = `translate(${graphX},${graphY})`;
       this.render.setAttribute(this.flowGraph.nativeElement, 'transform', graphTransform);
     } else if (this.draggingNode) {
-      this.render.setStyle($event.srcElement, 'cursor', 'move');
+      // this.render.setStyle($event.srcElement, 'cursor', 'move');
       this.draggingNode.x = $event.x - this.draggingStart.x;
       this.draggingNode.y = $event.y - this.draggingStart.y;
       this.tryLinks();
     } else {
       return;
     }
-
-
   }
-  @HostListener('document:mouseup', ['$event'])
-  onDragEnd($event: MouseEvent): void {
-    this.render.setStyle($event.srcElement, 'cursor', '');
+  @HostListener('mouseup', ['$event.target','$event'])
+  onDragEnd(ele, $event: MouseEvent): void {
+    this.render.setStyle($event.srcElement, 'cursor', 'default');
     // if (!this.draggingNode) {
     //   return;
     // }
+    // ele.setAttribute('cursor', '');
     if (this.isGraphOnDrag) {
+      this.graphPosition.x = this.graphPosition.x + $event.x - this.draggingStart.x;
+      this.graphPosition.y = this.graphPosition.y + $event.y - this.draggingStart.y;
       this.isGraphOnDrag = false;
     } else {
       this.draggingNode = undefined;
@@ -502,6 +549,29 @@ class Dialog {
  * @description 页面会话节点
  */
 class CalDialog extends Dialog implements Position {
+
+  // labelOption: {
+  //   width: number,
+  //   height: number
+  // };
+  // svgOptions:
+  svg?: {
+    width?: number,
+    points?: Array<number>
+  };
+  label?: {
+    x?: number,
+    y?: number
+  };
+  /**
+   * @description 简易intersection
+   */
+  intersection = {
+    left : 0,
+    right: 0,
+    top: 0,
+    bottom: 0
+  };
   x: number;
   y: number;
 
