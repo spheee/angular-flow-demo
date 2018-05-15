@@ -9,25 +9,20 @@ import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import * as figlet from 'figlet';
 
 import { AppComponent } from './app.component';
-import { FlowChartComponent } from './flow-chart/flow-chart.component';
 import { InMemoryDataService } from './in-memory-data.service';
-import { SceneService } from './flow/scene/scene.service';
 import { TestComponentComponent } from './test-component/test-component.component';
 import { TestService } from './ywtest/test.service';
 
 import { TestChildComponent } from './test-component/test-child.component';
 import { HeaderComponent } from './header/header.component';
 import { ShapeComponent } from './shape/shape.component';
-import { FlowComponent } from './flow/flow.component';
 import { NgZorroAntdModule } from 'ng-zorro-antd';
 import { RouteModule } from './route.module';
 
 // import { FlowSvgInfoService } from './flow/flow-svg-info.service';
 
 import { CookieModule } from 'ngx-cookie';
-import { FlowNodesService } from './flow/flow-nodes.service';
-import { SceneDialogService } from './flow/scene/scene-dialog.service';
-import { SvgInfoService } from './flow/svg/svg-info.service';
+
 import { DialogComponent } from './dialog/dialog.component';
 import { EditorModule } from './editor';
 
@@ -39,12 +34,10 @@ import { EditorModule } from './editor';
 @NgModule({
   declarations: [
     AppComponent,
-    FlowChartComponent,
     TestComponentComponent,
     TestChildComponent,
     HeaderComponent,
     ShapeComponent,
-    FlowComponent,
     DialogComponent,
     // EditorComponent,
     // 如果不想要child组件直接出现 或许封装一层？.withServerTransition({ appId: 'serverApp' })
@@ -67,7 +60,7 @@ import { EditorModule } from './editor';
     //   }
     // )
   ],
-  providers: [TestService, SceneService, SceneDialogService, SvgInfoService, FlowNodesService],
+  providers: [TestService],
   bootstrap: [AppComponent]
 })
 export class AppModule {

@@ -19,7 +19,7 @@
     cursor: pointer;
 }
 .node rect,.node polygon{
-    fill: #fff;
+    /* fill: #fff; */
     stroke: blue;
 }
 .node text{

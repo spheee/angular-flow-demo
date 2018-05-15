@@ -8,8 +8,8 @@ import * as dagreD3 from 'dagre-d3';
 import 'rxjs/add/operator/debounceTime';
 
 import { Guid } from '../../common/guid';
-import '../../common/intersect';
-import { SceneDialog } from '../../flow/scene/scene-dialog';
+// import '../../common/intersect';
+// import { SceneDialog } from '../../flow/scene/scene-dialog';
 import { EditorActionService } from '../editor-action.service';
 
 @Component({
@@ -343,8 +343,8 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
         // console.log(yTempIndex);
         // 虚拟节点 另外一个方向延伸
         // arr.findIndex()
-        // x = x + this.defaultOptions.nodeSep * xAxisIndex;
-        // y = y + value.virtualIndex * this.defaultOptions.rankSep;
+        x = x + this.defaultOptions.nodeSep * xAxisIndex;
+        y = y + value.virtualIndex * this.defaultOptions.rankSep;
       } else {
         x = x + this.defaultOptions.nodeSep * xAxisIndex;
         y = y;
