@@ -37,9 +37,8 @@ export class EditorComponent implements OnInit {
   onDragEnd($event: MouseEvent): void {
     if(this.isOnAdd){
       if(this.dragContent.nativeElement.offsetLeft> 100 && this.dragContent.nativeElement.offsetTop >100){
-
         const node ={
-          type:1,
+          type:3,
           position:{
             x:this.dragContent.nativeElement.offsetLeft,
             y:this.dragContent.nativeElement.offsetTop

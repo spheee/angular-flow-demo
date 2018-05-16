@@ -7,6 +7,8 @@ import { NgZorroAntdModule } from 'ng-zorro-antd';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { EditorMainComponent } from './editor-main/editor-main.component';
 import { EditorActionService } from './editor-action.service';
+import { EditorHoldonComponent } from './editor-holdon/editor-holdon.component';
+import { EditorHoldonService } from './editor-holdon/editor-holdon.service';
 
 @NgModule({
   imports: [
@@ -19,7 +21,8 @@ import { EditorActionService } from './editor-action.service';
     EditorHeaderComponent,
     // EditorSidebarComponent,
     EditorMainComponent,
+    EditorHoldonComponent,
   ],
-  providers: [EditorActionService]
+  providers: [EditorActionService, EditorHoldonService]
 })
 export class EditorModule { }

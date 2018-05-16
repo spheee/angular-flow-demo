@@ -10,7 +10,12 @@ class NodeAction{
 @Injectable()
 export class EditorActionService {
 
+  /**
+   * @description
+   */
   addNode: EventEmitter<NodeAction>;
+
+
   constructor() {
     this.addNode = new EventEmitter();
   }

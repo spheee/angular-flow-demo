@@ -1,10 +1,15 @@
 <div class='flow' #flow>
   <div class="flow-container" #flowContainer>
-    <button style="position: absolute;left: 10px; top: 10px;" nz-button [nzType]="'dashed'" (click)="tryLinks()">链接</button>
+    <button style="position: absolute;left: 10px; top: 10px;" nz-button [nzType]="'dashed'" (click)="link()">链接</button>
     <button style="position: absolute;left: 10px; top: 50px;" nz-button [nzType]="'dashed'" (click)="autoSort()">排列</button>
     <button style="position: absolute;left: 10px; top: 90px;" nz-button [nzType]="'dashed'" (click)="reset()">重置</button>
     
     <svg class="flow-svg" #flowSVG>
+      <svg:defs>
+        <svg:marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+          <svg:path d="M0,0 L0,6 L9,3 z" fill="#333"></svg:path> 
+        </svg:marker>
+      </svg:defs>
       <svg:text
       [attr.x]="infoNode.x"
       [attr.y]="infoNode.y">
@@ -12,7 +17,12 @@
       </svg:text>
       <svg:g class="flow-graph" #flowGraph>
           <svg:g class="lines">
-            <svg:path class="line" *ngFor="let line of flowLines" [attr.d]="line.d"></svg:path>
+            <svg:path class="line" *ngFor="let line of flowLines" [attr.d]="line.d"
+            stroke="#000"
+            stroke-width="1.5"
+            marker-end="url(#arrow)">
+
+            </svg:path>
           </svg:g>
           <svg:g class="labels"></svg:g>
           <svg:g class="nodes">
@@ -20,6 +30,9 @@
             (mousedown)="onDragStart(node, $event)"
             (dblclick)="modifyName(node,$event)"
             (click)="modifyDetail(node,$event)"
+            (mouseenter)="onHoldOnNodeAction(node,$event)"
+            (mouseover)="onNodeAction(node,$event)"
+            (mouseleave)="offNodeAction(node,$event)"
             [attr.id]="node.id|| node.uuid"
             [attr.transform]="textTranslate(node.x,node.y)">
                 <svg:rect class="entrance" *ngIf="node.dialogType == 0" 
@@ -30,42 +43,50 @@
                 [attr.rx]="10"
                 [attr.ry]="10">
                 </svg:rect>
-                <svg:rect class="parameter" *ngIf="node.dialogType == 1" 
-                [attr.width]="60" 
-                [attr.height]="30"
-                [attr.rx]="10"
-                [attr.ry]="10">
-                </svg:rect>
+                <svg:polygon class="parameter" *ngIf="node.dialogType ==1"
+                [attr.points]="node.svg.points">
+                </svg:polygon>
                 <svg:polygon class="logic" *ngIf="node.dialogType == 2" 
-                points="0,15 30,-5 60,15 30,35">
+                [attr.points]="node.svg.points">
                 </svg:polygon>
                 <svg:rect class="action" *ngIf="node.dialogType == 3" 
-                [attr.width]="60" 
+                [attr.width]="node.svg.width" 
                 [attr.height]="30"
+                [attr.x]="node.intersection.left"
+                [attr.y]="node.intersection.top"  
                 [attr.rx]="10"
                 [attr.ry]="10">
                 </svg:rect>
-                <svg:rect class="respond" *ngIf="node.dialogType == 4" 
-                [attr.width]="60" 
-                [attr.height]="30"
-                [attr.rx]="10"
-                [attr.ry]="10">
-                </svg:rect>
+                <svg:polygon class="respond" *ngIf="node.dialogType == 4" 
+                [attr.points]="node.svg.points">
+                </svg:polygon>
                 <svg:rect class="end" *ngIf="node.dialogType == 5" 
-                [attr.width]="60" 
+                [attr.width]="node.svg.width" 
                 [attr.height]="30"
+                [attr.x]="node.intersection.left"
+                [attr.y]="node.intersection.top"  
                 [attr.rx]="10"
                 [attr.ry]="10">
                 </svg:rect>
-                <svg:text text-anchor="middle"
+                <svg:text class="text" text-anchor="middle"
                 [attr.x]="node.label.x"
                 [attr.y]="node.label.y"
                 >{{node.name}}</svg:text>
             </svg:g>
-    
           </svg:g>
       </svg:g>
     </svg>
   </div>
-  <div class="flow-pops" #flowPops></div>
+  <div class="flow-pops" #flowPops (mouseover)="toggleNodeActionPops(true)" (mouseleave)="toggleNodeActionPops(false)">
+    <ul>
+      <li *ngFor="let na of nodeAction">
+        <a href="javascript:;">{{na.k}}</a>
+      </li>
+    </ul>
+  </div>
+  <app-editor-holdon class="flow-holdon-pops" #flowHoldOnPops>
+
+  </app-editor-holdon>
+  <!-- <div class="flow-holdon-pops" #flowHoldOnPops>
+  </div> -->
 </div>

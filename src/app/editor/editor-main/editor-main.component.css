@@ -1,6 +1,7 @@
 .flow{
     height: 100%;
     border: 1px dashed #fff;
+    position: relative;
 }
 .flow-container{
     background: url(data:image/gif;base64,R0lGODlhCgAKAIAAAPPz89/f3ywAAAAACgAKAAACEQyOaJnL515ksz11YQah+18AADs=)!important;
@@ -12,11 +13,34 @@
     height: 100%;
     width: 100%;
 }
+.flow-pops{
+    position: absolute;
+}
+.flow-pops li{
+    background: #388FF4;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    padding: 0 5px;
+}
+.flow-pops li a{
+    color: #fff;
+}
+.flow-holdon-pops{
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
 .line{
     stroke:#333333;
 }
 .node{
     cursor: pointer;
+}
+.node.on rect,
+.node.on polygon
+{
+  stroke: #e3e3e3;
 }
 .node rect,.node polygon{
     /* fill: #fff; */
