@@ -4,7 +4,21 @@
   </a>
 </div>
 <div class="parameter" *ngIf="currentType===1">
-    parameter
+   <ul>
+     <li></li>
+   </ul>
+   <button nz-button [nzType]="'dashed'">
+     <i class="anticon anticon-plus"></i>参数
+   </button>
+   <button nz-button [nzType]="'dashed'">
+      <i class="anticon anticon-plus"></i>响应
+    </button>
+    <button nz-button [nzType]="'dashed'">
+      <i class="anticon anticon-plus"></i>退出
+    </button>
+    <button nz-button [nzType]="'dashed'">
+        <i class="anticon anticon-delete"></i>删除
+    </button>
 </div>
 <div class="logic" *ngIf="currentType===2">
     logic
