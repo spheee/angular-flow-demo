@@ -13,6 +13,7 @@ import { Subject } from 'rxjs/Subject';
 import { Guid } from '../../common/guid';
 import { EditorActionService } from '../editor-action.service';
 import { EditorHoldonService } from '../editor-holdon/editor-holdon.service';
+import { gblen } from '../../common/gblen';
 
 // import '../../common/intersect';
 // import { SceneDialog } from '../../flow/scene/scene-dialog';
@@ -232,50 +233,6 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
    */
   initFlowSVG() {
     const svgId = new Guid().uuid(8, 16);
-    // this.flowContainer = this.ele.nativeElement.querySelector('.flow-container');
-    // this.flowSvg = d3.select(this.flowContainer as any).append('svg').attr('id', svgId)
-
-    // d3.select(this.flowSVG.nativeElement)
-    // .attr('width', '100%')
-    // .attr('height', '100%');
-
-    // const zoom = d3.zoom().on('zoom', () => {
-    //   d3.select(this.flowGraph.nativeElement).attr('transform', d3.event.transform);
-    // });
-    // d3.select(this.flowSVG.nativeElement).call(zoom);
-
-
-
-    // this.flowLines = this.flowSvg.append('g').attr('class', 'lines');
-    // this.flowLabels = this.flowSvg.append('g').attr('class', 'labels');
-    // this.flowNodes = this.flowSvg.append('g').attr('class', 'nodes');
-    const ttrs: Dialog = {
-      id: 1,
-      name: 'test',
-      dialogType: 0,
-      nextDialog: 'abcdefa',
-      uuid: 'abcdefg',
-      group: '测试组',
-      groupId: 11
-    };
-    const ttrv: Dialog = {
-      id: 2,
-      name: 'sdasd',
-      dialogType: 2,
-      nextDialog: 'abcdefb',
-      uuid: 'abcdefa',
-      group: '测试组',
-      groupId: 11
-    };
-    const ttrf: Dialog = {
-      id: 3,
-      name: 'asdsdsx',
-      dialogType: 3,
-      nextDialog: 'abcdefc',
-      uuid: 'abcdefb',
-      group: '测试组',
-      groupId: 11
-    };
     const dialogs = [{
         id: 1,
         name: '流程图入口sdasdas',
@@ -347,20 +304,6 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
 
     this.setNodes(dialogs);
     this.link();
-    // this.tryLinks();
-    // this.flowNodes = [ttrs,ttrs];
-
-    // d3.selectAll('.node').call(d3.drag()).on('started', function() {
-    // const circle = d3.select(this).classed('dragging', true);
-
-    // d3.event.on('drag', dragged).on('end', ended);
-    // function dragged(d) {
-    //   circle.raise().attr('cx', d.x = d3.event.x).attr('cy', d.y = d3.event.y);
-    // }
-    // function ended() {
-    //   circle.classed('dragging', false);
-    // }
-    // });
   }
   /**
    * @description 添加节点
@@ -387,7 +330,6 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
     }));
     // return ;
   }
-
   /**
    * @description 连接
    */
@@ -474,7 +416,6 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
     });
     this.flowLines = lines;
   }
-
   /**
    * @description 设置节点
    * @param dialog
@@ -492,7 +433,6 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
     this.flowNodes = calArray;
     this.calculateNodes(calArray);
   }
-
   /**
    * @description [链接线用] 查找上一个连接的节点
    * @param calDialog 当前会话节点
@@ -508,7 +448,7 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
     return prevNode;
   }
   /**
-   * @description 查找当前节点上个节点 如果是逻辑节点 寻找主节点
+   * @description [标记点用] 查找当前节点上个节点 如果是逻辑节点 寻找主节点
    * @param calDialog 会话节点
    */
   findNodePrev(calDialog: CalDialog): CalDialog {
@@ -569,6 +509,9 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
     this.flowNodes = calArray;
   }
 
+  /**
+   * @description 计算字符串长度
+   */
   gblen = function (str) {
     let len = 0;
     for (let i = 0; i < str.length; i++) {
@@ -604,7 +547,7 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
     // 通过四个基准点给出坐标
     switch (calDialog.dialogType) {
       case 0:
-        width = this.gblen(calDialog.name) * 8 + 15 * 2;
+        width = gblen(calDialog.name) * 8 + 15 * 2;
         calDialog.svg.width = width;
         calDialog.intersection.left = -width / 2;
         calDialog.intersection.right = width / 2;
@@ -612,7 +555,7 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
         calDialog.intersection.bottom = 10;
         break;
       case 1:
-        width = this.gblen(calDialog.name) * 8 + 15 * 2;
+        width = gblen(calDialog.name) * 8 + 15 * 2;
         height = 30;
         calDialog.svg.width = width;
         calDialog.intersection.left = -width / 2;
@@ -627,7 +570,7 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
         ${calDialog.intersection.left},${calDialog.intersection.bottom}`;
         break;
       case 2:
-        width = this.gblen(calDialog.name) * 8 + 15 * 2;
+        width = gblen(calDialog.name) * 8 + 15 * 2;
         height = 30;
         // calDialog.svg.width = width;
         calDialog.intersection.left = -width;
@@ -638,7 +581,7 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
         0,${calDialog.intersection.bottom}`;
         break;
       case 3:
-        width = this.gblen(calDialog.name) * 8 + 15 * 2;
+        width = gblen(calDialog.name) * 8 + 15 * 2;
         calDialog.svg.width = width;
         calDialog.intersection.left = -width / 2;
         calDialog.intersection.right = width / 2;
@@ -646,7 +589,7 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
         calDialog.intersection.bottom = 10;
         break;
       case 4:
-        width = this.gblen(calDialog.name) * 8 + 15 * 2;
+        width = gblen(calDialog.name) * 8 + 15 * 2;
         height = 30;
         calDialog.svg.width = width;
         calDialog.intersection.left = -width / 2 - 15;
@@ -662,7 +605,7 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
         ${calDialog.intersection.left + 15},${calDialog.intersection.bottom}`;
         break;
       case 5:
-        width = this.gblen(calDialog.name) * 8 + 15 * 2;
+        width = gblen(calDialog.name) * 8 + 15 * 2;
         calDialog.svg.width = width;
         calDialog.intersection.left = -width / 2;
         calDialog.intersection.right = width / 2;
@@ -675,6 +618,11 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
     }
   }
 
+  /**
+   * @description 转化坐标为translate
+   * @param x x轴
+   * @param y y轴
+   */
   textTranslate(x, y) {
     return `translate(${x},${y})`;
   }
@@ -854,34 +802,28 @@ export class EditorMainComponent implements OnInit, AfterContentChecked {
 
 }
 
-
-
-
 interface Position {
   x: number;
   y: number;
 }
-
 class Dialog {
 
-  id ? : number;
+  id ?: number;
   name: string;
   dialogType: number;
   nextDialog: string;
-  prevDialog ? : string;
-  errorDialog ? : string;
-  del ? : number;
+  prevDialog ?: string;
+  errorDialog ?: string;
+  del ?: number;
   uuid: string;
   group: string;
   groupId: number;
-  children ? : Array < any > ;
+  children ?: Array < any > ;
 }
 /**
  * @description 页面会话节点
  */
 class CalDialog extends Dialog implements Position {
-
-
   svg ? : {
     width ? : number,
     points ? : string
@@ -905,7 +847,7 @@ class CalDialog extends Dialog implements Position {
   /**
    * @description 是否虚拟节点
    */
-  isVirtual ? : boolean;
+  isVirtual ?: boolean;
   /**
    * @description 虚拟节点深度 即children index
    */
@@ -914,9 +856,9 @@ class CalDialog extends Dialog implements Position {
   name: string;
   dialogType: number;
   nextDialog: string;
-  prevDialog ? : string;
-  errorDialog ? : string;
-  del ? : number;
+  prevDialog ?: string;
+  errorDialog ?: string;
+  del ?: number;
   uuid: string;
   group: string;
   groupId: number;

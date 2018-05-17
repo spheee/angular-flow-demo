@@ -9,6 +9,7 @@ import { EditorMainComponent } from './editor-main/editor-main.component';
 import { EditorActionService } from './editor-action.service';
 import { EditorHoldonComponent } from './editor-holdon/editor-holdon.component';
 import { EditorHoldonService } from './editor-holdon/editor-holdon.service';
+import { EditorService } from './editor.service';
 
 @NgModule({
   imports: [
@@ -23,6 +24,6 @@ import { EditorHoldonService } from './editor-holdon/editor-holdon.service';
     EditorMainComponent,
     EditorHoldonComponent,
   ],
-  providers: [EditorActionService, EditorHoldonService]
+  providers: [EditorActionService, EditorHoldonService, EditorService]
 })
 export class EditorModule { }
